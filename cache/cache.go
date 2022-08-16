@@ -10,8 +10,12 @@ func (c *Cache) SaveToCache(info *detail.OrderInfo) {
 	c.cache[info.OrderUID] = *info
 }
 
-func NewCache() Cache {
-	return Cache{cache: make(map[string]detail.OrderInfo)}
+func NewCache() *Cache {
+	return &Cache{cache: make(map[string]detail.OrderInfo)}
+}
+
+func (c *Cache) Getc() map[string]detail.OrderInfo {
+	return c.cache
 }
 
 func ReloadCacheFromDatabase(info *detail.OrderInfo) Cache {
