@@ -1,46 +1,36 @@
 package main
 
 import (
+	"Wildberries_L0/database"
+	"Wildberries_L0/detail"
+	"Wildberries_L0/nats"
+	"encoding/json"
 	"fmt"
-	sql "github.com/lib/pq"
 )
 
-const (
-	host = "localhost"
-	port = 5432
-	user = "syalsr" +
-		""
-	password = "12345"
-	dbname   = "wildberries_l0"
-)
+/*
+1. Сначала надо разобраться с натс стриминг. Что такое, как работает. И отправить данные из одного мейна в другой.
+3. Сделать паблишер, который будет отправлять данные через натс и проверить, что сабскрайбер получает эти данные.
+4. Сделать валидацию данных, которые сабскрайбер получает.
+5. Потом загуглить, как подрубать базу данных и оправить данные из структуры в бд.
+6. кэш
+7. http
+*/
+type Cache struct {
+	cache map[string]int
+}
 
 func main() {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	s := nats.Nats()
+	fmt.Println(string(s))
 
-	db, err := sql.Open(psqlconn)
+	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
-
 	defer db.Close()
 
-	fmt.Println("Connected!")
-}
-
-func nats() {
-	/*sc, _ := stan.Connect(clusterID, clientID)
-
-	// Simple Synchronous Publisher
-	sc.Publish("foo", []byte("Hello World")) // does not return until an ack has been received from NATS Streaming
-
-	// Simple Async Subscriber
-	sub, _ := sc.Subscribe("foo", func(m *stan.Msg) {
-		fmt.Printf("Received a message: %s\n", string(m.Data))
-	})
-
-	// Unsubscribe
-	sub.Unsubscribe()
-
-	// Close connection
-	sc.Close()*/
+	bytes := nats.Nats()
+	var orderInfo detail.OrderInfo
+	json.Unmarshal(bytes, &orderInfo)
 }
