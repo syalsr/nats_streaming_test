@@ -42,10 +42,8 @@ func main() {
 	time.Sleep(18 * time.Second)
 	defer sub.Unsubscribe()
 
-	var info detail.OrderInfo
-	json.Unmarshal([]byte(js), &info)
 	connection := database.Connect()
-	//database.InsertData(connection, info)
+	database.InsertData(connection, info)
 	info1 := database.GetUID(connection, info.OrderUID)
 	fmt.Println(info1)
 }
