@@ -18,3 +18,7 @@ type OrderInfo struct {
 	DateCreated       time.Time `json:"date_created"`
 	OofShard          string    `json:"oof_shard"`
 }
+
+func NewOrderInfo() *OrderInfo {
+	return &OrderInfo{}
+}

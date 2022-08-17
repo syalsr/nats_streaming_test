@@ -1,11 +1,12 @@
 package main
 
 import (
+	"Wildberries_L0/cache"
 	"Wildberries_L0/config"
 	"Wildberries_L0/database"
 	"Wildberries_L0/detail"
+	"Wildberries_L0/web"
 	"encoding/json"
-	"fmt"
 	"github.com/nats-io/stan.go"
 	"time"
 )
@@ -19,18 +20,26 @@ import (
 */
 
 func main() {
+	connection := database.Connect()
+	orderCache := cache.LoadCacheFromDatabase(connection)
+
 	cfg := config.ConfigNatsStreamingConsumer()
 	sc, err := stan.Connect(cfg.ClusterID, cfg.ClientID, stan.NatsURL(cfg.NatsServer))
 	if err != nil {
 		panic(err)
 	}
-	var info detail.OrderInfo
+
+	var orders []detail.OrderInfo
 	sub, err := sc.Subscribe(cfg.Channel, func(msg *stan.Msg) {
 		if !json.Valid(msg.Data) {
 			panic(err)
 		}
 
+		info := detail.NewOrderInfo()
 		err := json.Unmarshal(msg.Data, &info)
+		orderCache.SaveToCache(info)
+		orders = append(orders, *info)
+
 		if err != nil {
 			panic(err)
 		}
@@ -38,12 +47,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	time.Sleep(5 * time.Second)
 
-	time.Sleep(18 * time.Second)
+	database.InsertData(connection, orders)
 	defer sub.Unsubscribe()
 
-	connection := database.Connect()
-	database.InsertData(connection, info)
-	info1 := database.GetUID(connection, info.OrderUID)
-	fmt.Println(info1)
+	web.Server(orderCache)
 }

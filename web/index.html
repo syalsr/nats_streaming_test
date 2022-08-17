@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <title>Level 0</title>
 </head>
 <body>
-<form method="POST" action="/">
-    <div class="cw-text-zone">
-        <label>USER_UID</label><textarea name="request" rows="2" cols="40" ></textarea>
-        <input type="submit" value="submit" />
-    </div>
-    <textarea rows="40" cols="50" >{{.ResponseJson}}</textarea>
-</form>
+<div>
+    <form action="/order" method="get" name="DetailOrder">
+        <label for="uid">Enter UID</label>
+        <br>
+        <input type="text" name="order_id" id="uid">
+        <br>
+        <input type="submit">
+        <br>
+        <div>{{ .order }}</div>
+    </form>
+</div>
 </body>
 </html>

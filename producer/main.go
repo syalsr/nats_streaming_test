@@ -6,6 +6,13 @@ import (
 	"os"
 )
 
+const (
+	ClusterID  = "test-cluster"
+	ClientID   = "publisher"
+	NatsServer = "0.0.0.0:4222"
+	Channel    = "orders"
+)
+
 func main() {
 	cfg := ConfigNatsStreamingProducer()
 	sc, err := stan.Connect(cfg.ClusterID, cfg.ClientID, stan.NatsURL(cfg.NatsServer))
@@ -30,8 +37,8 @@ func main() {
 				fmt.Println("Cannot read a file, may be incorrect path")
 				continue
 			}
-			err = sc.Publish(cfg.Channel, content)
-			fmt.Println(string(content))
+			//err = sc.Publish(cfg.Channel, content)
+			err = sc.Publish(Channel, content)
 			if err != nil {
 				panic(err)
 			}

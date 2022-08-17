@@ -9,21 +9,26 @@ import (
 	"os"
 )
 
-func GetUID(connection *pgx.Conn, OrderUID string) *detail.OrderInfo {
+func GetOrderByUID(connection *pgx.Conn, OrderUID string) *detail.OrderInfo {
 	query := `
-		select info from orders where order_uid=$1
+		SELECT info FROM orders WHERE order_uid=$1
 	`
 	info := new(detail.OrderInfo)
 	connection.QueryRow(context.Background(), query, OrderUID).Scan(&info)
 	return info
 }
 
-func InsertData(connection *pgx.Conn, info detail.OrderInfo) {
+func InsertData(connection *pgx.Conn, info []detail.OrderInfo) {
 	query := `
-		INSERT INTO orders (info, order_uid)
-		VALUES($1, $2)
+		INSERT INTO orders (order_uid, info)
+		VALUES ($1, $2)
 	`
-	connection.QueryRow(context.Background(), query, info, info.OrderUID)
+
+	batch := &pgx.Batch{}
+	for _, js := range info {
+		batch.Queue(query, js.OrderUID, js)
+	}
+	connection.SendBatch(context.Background(), batch)
 }
 
 func Connect() *pgx.Conn {

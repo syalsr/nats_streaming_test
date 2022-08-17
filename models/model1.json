@@ -17,7 +17,7 @@
     "currency": "USD",
     "provider": "wbpay",
     "amount": 1817,
-    "payment_dt": 1637907727,
+    "payment_dt": 1631907727,
     "bank": "alpha",
     "delivery_cost": 1500,
     "goods_total": 317,
@@ -32,7 +32,7 @@
       "name": "Mascaras",
       "sale": 30,
       "size": "0",
-      "total_price": 317,
+      "total_price": 117,
       "nm_id": 2389212,
       "brand": "Vivienne Sabo",
       "status": 202
