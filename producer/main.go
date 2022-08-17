@@ -7,12 +7,6 @@ import (
 	"os"
 )
 
-const (
-	clusterID = "test-cluster"
-	clientID  = "publisher"
-	channel   = "orders"
-)
-
 func main() {
 	err := godotenv.Load("A:/go_workspace/Wildberries_L0/.env")
 	clusterID := os.Getenv("STANCLUSTERID")
