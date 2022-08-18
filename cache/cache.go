@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"Wildberries_L0/database"
 	"Wildberries_L0/detail"
 	"context"
 	"encoding/json"
@@ -27,25 +28,39 @@ func (c *Cache) GetOrderByUID(uid string) (value detail.OrderInfo, inCache bool)
 	return detail.OrderInfo{}, false
 }
 
+func (c *Cache) SendFromCacheToDatabase(connection *pgx.Conn) {
+	var orders []detail.OrderInfo
+
+	for _, value := range c.cache {
+		orders = append(orders, value)
+	}
+	database.InsertData(connection, orders)
+}
+
 func LoadCacheFromDatabase(connection *pgx.Conn) (orderCache *Cache) {
 	orderCache = newCache()
+
 	rows, err := connection.Query(context.Background(), "SELECT order_uid, info FROM orders")
 	if err != nil {
 		panic(err)
 	}
-	//defer rows.Close()
+	defer rows.Close()
+
 	for rows.Next() {
 		var orderUID string
 		var info string
+
 		err := rows.Scan(&orderUID, &info)
 		if err != nil {
 			panic(err)
 		}
+
 		var orderInfo detail.OrderInfo
 		err = json.Unmarshal([]byte(info), &orderInfo)
 		if err != nil {
 			panic(err)
 		}
+
 		orderCache.SaveToCache(&orderInfo)
 	}
 	return orderCache

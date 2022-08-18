@@ -17,7 +17,7 @@ type natsConfigProducer struct {
 }
 
 func ConfigNatsStreamingProducer() *natsConfigProducer {
-	err := godotenv.Load("A:/go_workspace/Wildberries_L0/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		panic(err)
 	}
