@@ -11,14 +11,6 @@ import (
 	"time"
 )
 
-/*
-2. Подключаемся к бд
-1. Подписываем на канал натс
-2. Кладем данные в бд
-3. Из бд берем данные в кеш
-4. html
-*/
-
 func main() {
 	connection := database.Connect()
 	orderCache := cache.LoadCacheFromDatabase(connection)
@@ -37,12 +29,11 @@ func main() {
 
 		info := detail.NewOrderInfo()
 		err := json.Unmarshal(msg.Data, &info)
-		orderCache.SaveToCache(info)
-		orders = append(orders, *info)
-
 		if err != nil {
 			panic(err)
 		}
+		orderCache.SaveToCache(info)
+		orders = append(orders, *info)
 	})
 	if err != nil {
 		panic(err)

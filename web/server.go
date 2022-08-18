@@ -17,9 +17,13 @@ func Server(orderCache *cache.Cache) {
 	})
 	r.GET("/order/", func(c *gin.Context) {
 		//id := c.DefaultQuery("order_id", "Guest")
-		id := orderCache.GetOrderByUID(c.Query("order_id"))
-		//c.PureJSON()
-		c.JSON(http.StatusOK, id)
+		id, inCache := orderCache.GetOrderByUID(c.Query("order_id"))
+		if inCache {
+			c.PureJSON(http.StatusOK, id)
+			//c.JSON(http.StatusOK, id)
+		} else {
+			c.String(404, "orderUID not found")
+		}
 	})
 	r.Run(":8080")
 }

@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v4"
-	"os"
 )
 
 func GetOrderByUID(connection *pgx.Conn, OrderUID string) *detail.OrderInfo {
@@ -25,8 +24,8 @@ func InsertData(connection *pgx.Conn, info []detail.OrderInfo) {
 	`
 
 	batch := &pgx.Batch{}
-	for _, js := range info {
-		batch.Queue(query, js.OrderUID, js)
+	for _, item := range info {
+		batch.Queue(query, item.OrderUID, item)
 	}
 	connection.SendBatch(context.Background(), batch)
 }
@@ -38,8 +37,7 @@ func Connect() *pgx.Conn {
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Dbname)
 	db, err := pgx.Connect(context.Background(), psqlconn)
 	if err != nil {
-		os.Exit(1)
+		panic(err)
 	}
-	fmt.Println("Connected!")
 	return db
 }
